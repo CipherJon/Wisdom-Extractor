@@ -152,7 +152,7 @@ def process_with_ai(text):
     }
     
     data = {
-        "model": "anthropic/claude-3-opus-20240229",
+        "model": "deepseek/deepseek-r1-0528-qwen3-8b:free",
         "messages": [
             {
                 "role": "system",

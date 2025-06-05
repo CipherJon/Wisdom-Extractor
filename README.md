@@ -1,6 +1,6 @@
 # Wisdom Extractor
 
-A Streamlit application that extracts wisdom and insights from YouTube videos using AI. The application uses the YouTube Transcript API to fetch video transcripts and processes them through OpenRouter's AI models to extract key insights and lessons.
+A Streamlit application that extracts wisdom and insights from YouTube videos using AI. The application uses the YouTube Transcript API to fetch video transcripts and processes them through OpenRouter's AI models (specifically deepseek-r1-0528-qwen3-8b) to extract key insights and lessons.
 
 ## Features
 
@@ -8,6 +8,7 @@ A Streamlit application that extracts wisdom and insights from YouTube videos us
 - Process transcripts using AI to extract wisdom and insights
 - Clean and user-friendly interface
 - Support for various YouTube URL formats
+- Uses deepseek-r1-0528-qwen3-8b model for consistent, high-quality insights
 
 ## Setup
 
@@ -49,3 +50,7 @@ streamlit run app.py
 ## Note
 
 Make sure the YouTube video has captions/transcripts available. The application will not work with videos that don't have captions enabled.
+
+## AI Model
+
+This application uses the `deepseek/deepseek-r1-0528-qwen3-8b:free` model through OpenRouter. This model is specifically chosen for its ability to extract meaningful insights and wisdom from text content.

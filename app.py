@@ -121,7 +121,12 @@ def get_transcript(video_id, retries=3, delay=2):
     attempt = 0
     while attempt < retries:
         try:
-            transcript = YouTubeTranscriptApi.get_transcript(video_id)
+            # Try to get transcript with auto-generated captions
+            transcript = YouTubeTranscriptApi.get_transcript(
+                video_id,
+                languages=['en', 'en-US', 'en-GB'],  # Try different English variants
+                preserve_formatting=True
+            )
             formatter = TextFormatter()
             formatted = formatter.format_transcript(transcript)
             print(f"[DEBUG] Successfully fetched transcript for video_id: {video_id}, length: {len(formatted)} characters")

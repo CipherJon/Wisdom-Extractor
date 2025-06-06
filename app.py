@@ -192,13 +192,21 @@ def format_wisdom_output(markdown_text):
     # Convert markdown to HTML
     html = markdown.markdown(markdown_text, extensions=extensions)
     
-    # Wrap each section in a styled div
+    # Split into sections and wrap each in a styled div
     sections = html.split('<h3>')
     formatted_html = sections[0]  # Keep any content before the first h3
     
     for section in sections[1:]:
         if section.strip():
-            formatted_html += f'<div class="wisdom-section"><h3>{section}'
+            # Find the next h3 tag or end of content
+            next_section_start = section.find('<h3>')
+            if next_section_start != -1:
+                # Split at the next h3
+                current_section = section[:next_section_start]
+                formatted_html += f'<div class="wisdom-section"><h3>{current_section}</div>'
+            else:
+                # This is the last section
+                formatted_html += f'<div class="wisdom-section"><h3>{section}</div>'
     
     return formatted_html
 

@@ -181,10 +181,44 @@ def main():
     st.title("Wisdom Extractor")
     st.write("Extract wisdom and insights from YouTube videos using AI")
     
+    # Add custom CSS for consistent formatting
+    st.markdown("""
+        <style>
+        .wisdom-section {
+            margin: 1.5em 0;
+            padding: 1em;
+            border-left: 4px solid #4CAF50;
+            background-color: #f8f9fa;
+        }
+        .wisdom-section h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5em;
+            font-size: 1.4em;
+        }
+        .wisdom-section ul {
+            margin: 0;
+            padding-left: 1.5em;
+        }
+        .wisdom-section li {
+            margin: 0.5em 0;
+            line-height: 1.4;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    # Initialize session state for transcript if not exists
+    if 'transcript' not in st.session_state:
+        st.session_state.transcript = None
+    
+    # Initialize session state for processing status
+    if 'is_processing' not in st.session_state:
+        st.session_state.is_processing = False
+    
     # Input for YouTube URL
     youtube_url = st.text_input("Enter YouTube URL:")
     
-    if youtube_url:
+    # Process new URL if provided and not currently processing
+    if youtube_url and not st.session_state.is_processing:
         if not is_valid_youtube_url(youtube_url):
             st.error("Please enter a valid YouTube URL")
             return
@@ -195,16 +229,32 @@ def main():
                 transcript = get_transcript(video_id)
                 if transcript.startswith("Error"):
                     st.error(transcript)
+                    st.session_state.transcript = None
                 else:
-                    st.text_area("Transcript:", transcript, height=200)
-                    
-                    if st.button("Extract Wisdom"):
-                        with st.spinner("Processing with AI..."):
-                            wisdom = process_with_ai(transcript)
-                            st.markdown("### Extracted Wisdom")
-                            st.markdown(wisdom)
-        else:
-            st.error("Could not extract video ID from URL")
+                    st.session_state.transcript = transcript
+    
+    # Display transcript if available
+    if st.session_state.transcript:
+        st.text_area("Transcript:", st.session_state.transcript, height=200)
+        
+        # Extract Wisdom button
+        if st.button("Extract Wisdom", disabled=st.session_state.is_processing):
+            try:
+                st.session_state.is_processing = True
+                with st.spinner("Processing with AI..."):
+                    # Use the stored transcript directly
+                    stored_transcript = st.session_state.transcript
+                    wisdom = process_with_ai(stored_transcript)
+                    if wisdom.startswith("Error"):
+                        st.error(wisdom)
+                        st.info("The transcript is still available above. You can try extracting wisdom again.")
+                    else:
+                        # Format the wisdom output with consistent styling
+                        formatted_wisdom = wisdom.replace("### ", "<div class='wisdom-section'><h3>").replace("\n\n", "</div>\n\n<div class='wisdom-section'><h3>")
+                        formatted_wisdom = formatted_wisdom + "</div>"
+                        st.markdown(formatted_wisdom, unsafe_allow_html=True)
+            finally:
+                st.session_state.is_processing = False
 
 if __name__ == "__main__":
     main() 

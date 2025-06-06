@@ -6,6 +6,8 @@ import requests
 from dotenv import load_dotenv
 import re
 import time
+import markdown
+from markdown.extensions import fenced_code, tables, nl2br
 
 # Load environment variables
 load_dotenv()
@@ -177,6 +179,29 @@ def process_with_ai(text):
     except Exception as e:
         return f"Error processing with AI: {str(e)}"
 
+def format_wisdom_output(markdown_text):
+    """Convert markdown to HTML with proper styling."""
+    # Configure markdown extensions
+    extensions = [
+        'markdown.extensions.fenced_code',
+        'markdown.extensions.tables',
+        'markdown.extensions.nl2br',
+        'markdown.extensions.sane_lists'
+    ]
+    
+    # Convert markdown to HTML
+    html = markdown.markdown(markdown_text, extensions=extensions)
+    
+    # Wrap each section in a styled div
+    sections = html.split('<h3>')
+    formatted_html = sections[0]  # Keep any content before the first h3
+    
+    for section in sections[1:]:
+        if section.strip():
+            formatted_html += f'<div class="wisdom-section"><h3>{section}'
+    
+    return formatted_html
+
 def main():
     st.title("Wisdom Extractor")
     st.write("Extract wisdom and insights from YouTube videos using AI")
@@ -249,9 +274,8 @@ def main():
                         st.error(wisdom)
                         st.info("The transcript is still available above. You can try extracting wisdom again.")
                     else:
-                        # Format the wisdom output with consistent styling
-                        formatted_wisdom = wisdom.replace("### ", "<div class='wisdom-section'><h3>").replace("\n\n", "</div>\n\n<div class='wisdom-section'><h3>")
-                        formatted_wisdom = formatted_wisdom + "</div>"
+                        # Format the wisdom output using proper markdown parsing
+                        formatted_wisdom = format_wisdom_output(wisdom)
                         st.markdown(formatted_wisdom, unsafe_allow_html=True)
             finally:
                 st.session_state.is_processing = False

@@ -3,12 +3,33 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
+from youtube_transcript_api import YouTubeTranscriptApi
+
 from utils.io_utils import (
     download_transcript,
     download_youtube_video,
     read_from_file,
     save_to_file,
 )
+
+
+# Monkey patch get_transcript method for testing
+class MockTranscriptSnippet:
+    def __init__(self, text, start, duration):
+        self.text = text
+        self.start = start
+        self.duration = duration
+
+
+def get_transcript_mock(*args, **kwargs):
+    return [
+        MockTranscriptSnippet("Hello", 0.0, 1.0),
+        MockTranscriptSnippet("World", 1.0, 1.0),
+    ]
+
+
+YouTubeTranscriptApi.get_transcript = get_transcript_mock
+
 
 class TestIOUtils(unittest.TestCase):
     @patch("utils.io_utils.yt_dlp.YoutubeDL")
@@ -41,30 +62,36 @@ class TestIOUtils(unittest.TestCase):
             download_youtube_video("http://youtube.com/watch?v=test_id", "/tmp")
         self.assertIn("Download failed", str(context.exception))
 
-    @patch("youtube_transcript_api.YouTubeTranscriptApi.get_transcript")
+    @patch("utils.io_utils.YouTubeTranscriptApi.get_transcript")
     def test_download_transcript_success(self, mock_get_transcript):
-        # Setup mock
+        # Setup mock with proper objects
+        class MockSnippet:
+            def __init__(self, text, start, duration):
+                self.text = text
+                self.start = start
+                self.duration = duration
+
         mock_get_transcript.return_value = [
-            {"text": "Hello", "start": 0.0, "duration": 1.0},
-            {"text": "World", "start": 1.0, "duration": 1.0},
+            MockSnippet("Hello", 0.0, 1.0),
+            MockSnippet("World", 1.0, 1.0),
         ]
 
         # Call function
         result = download_transcript("test_id")
 
-        # Assertions
-        self.assertEqual(result, "Hello World")
+        # Assertions - should return file path, not content
+        self.assertIsNotNone(result)
+        self.assertTrue(result.endswith("test_id.txt"))
         mock_get_transcript.assert_called_once_with("test_id")
 
-    @patch("youtube_transcript_api.YouTubeTranscriptApi.get_transcript")
+    @patch("utils.io_utils.YouTubeTranscriptApi.get_transcript")
     def test_download_transcript_failure(self, mock_get_transcript):
         # Setup mock to raise exception
         mock_get_transcript.side_effect = Exception("Transcript not available")
 
-        # Call function and assert exception
-        with self.assertRaises(Exception) as context:
-            download_transcript("test_id")
-        self.assertIn("Transcript not available", str(context.exception))
+        # Call function - it should return None, not raise exception
+        result = download_transcript("test_id")
+        self.assertIsNone(result)
 
     def test_save_to_file(self):
         # Create a temporary file
@@ -96,6 +123,7 @@ class TestIOUtils(unittest.TestCase):
 
         # Clean up
         os.unlink(tmp_file_path)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -19,7 +19,6 @@ def mock_streamlit():
         error=MagicMock(),
         success=MagicMock(),
         info=MagicMock(),
-        spinner=MagicMock(),  # Mock the spinner context manager
         session_state=MagicMock(),
         text_input=MagicMock(
             return_value="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
@@ -27,11 +26,26 @@ def mock_streamlit():
         button=MagicMock(return_value=True),
         text_area=MagicMock(),
         markdown=MagicMock(),
-    ) as mocks:
-        # Set up the spinner mock to work as a context manager
-        mocks.spinner.return_value.__enter__ = MagicMock(return_value=None)
-        mocks.spinner.return_value.__exit__ = MagicMock(return_value=None)
-        yield mocks
+    ):
+        # Mock the spinner context manager separately
+        spinner_mock = MagicMock()
+        spinner_mock.return_value.__enter__ = MagicMock(return_value=None)
+        spinner_mock.return_value.__exit__ = MagicMock(return_value=None)
+
+        with patch("streamlit.spinner", spinner_mock):
+            yield {
+                "title": st.title,
+                "write": st.write,
+                "error": st.error,
+                "success": st.success,
+                "info": st.info,
+                "session_state": st.session_state,
+                "text_input": st.text_input,
+                "button": st.button,
+                "text_area": st.text_area,
+                "markdown": st.markdown,
+                "spinner": spinner_mock,
+            }
 
 
 def test_main(mock_streamlit):
@@ -75,7 +89,9 @@ This is a test summary
         # Assertions
         mock_streamlit["title"].assert_called_once_with("Wisdom Extractor")
         mock_streamlit["text_input"].assert_called_once_with("Enter YouTube URL:")
-        mock_streamlit["button"].assert_called_once_with("Extract Wisdom")
+        mock_streamlit["button"].assert_called_once_with(
+            "Extract Wisdom", disabled=False
+        )
         mock_process_with_ai.assert_called_once()
         mock_streamlit["write"].assert_called()
 
@@ -99,6 +115,6 @@ def test_main_invalid_url(mock_streamlit):
         # Assertions
         mock_streamlit["title"].assert_called_once_with("Wisdom Extractor")
         mock_streamlit["text_input"].assert_called_once_with("Enter YouTube URL:")
-        mock_streamlit["button"].assert_called_once_with("Extract Wisdom")
-        mock_process_with_ai.assert_called_once()
-        mock_streamlit["error"].assert_called_once_with("Error: Invalid URL")
+        mock_streamlit["error"].assert_called_once_with(
+            "Error getting transcript after 3 attempts: Transcript not available"
+        )

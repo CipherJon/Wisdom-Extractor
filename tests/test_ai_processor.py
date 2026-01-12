@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 from data.models import Insight
 from utils.ai_processor import AIProcessor
 
+
 class TestAIProcessor(unittest.TestCase):
     def setUp(self):
         self.transcript = "This is a sample transcript for testing purposes."
@@ -21,14 +22,28 @@ class TestAIProcessor(unittest.TestCase):
 
         # Mock the chat completions response with proper format
         mock_response = MagicMock()
+        mock_message = MagicMock()
+        mock_message.content = """
+        Here are the extracted insights:
+        - First important wisdom from the video
+        - Second deep observation
+        """
+        mock_choice = MagicMock()
+        mock_choice.message = mock_message
+        mock_response.choices = [mock_choice]
+        # Set the return_value for the content attribute
         mock_response.choices[0].message.content = """
         Here are the extracted insights:
-        1. First important wisdom from the video
-        2. Second deep observation
+        - First important wisdom from the video
+        - Second deep observation
         """
         mock_client.chat.completions.create.return_value = mock_response
 
         insights = self.ai_processor.extract_insights(self.transcript)
+
+        # Debug output
+        print(f"Insights: {insights}")
+        print(f"Insights length: {len(insights)}")
 
         # Verify the insights are correctly parsed
         self.assertIsInstance(insights, list)
@@ -63,6 +78,7 @@ class TestAIProcessor(unittest.TestCase):
 
         with self.assertRaises(RuntimeError):
             self.ai_processor.extract_insights(self.transcript)
+
 
 if __name__ == "__main__":
     unittest.main()

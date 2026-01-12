@@ -1,6 +1,6 @@
 import os
-from typing import List, Optional
 from contextlib import contextmanager
+from typing import List, Optional
 
 from openai import OpenAI
 
@@ -8,6 +8,7 @@ from data.models import Insight
 from logging_utils.logger import get_logger
 
 logger = get_logger(__name__)
+
 
 class AIProcessor:
     """
@@ -61,7 +62,9 @@ class AIProcessor:
             )
 
             insights_text = response.choices[0].message.content
+            print(f"Insights text: '{insights_text}'")
             insights = self._parse_insights(insights_text)
+            print(f"Parsed insights: {insights}")
             return insights
         except Exception as e:
             logger.error(f"Error extracting insights: {e}")
@@ -82,18 +85,20 @@ class AIProcessor:
             return insights
 
         # Improved parsing logic to handle various formats
-        for line in insights_text.split('\n'):
+        for line in insights_text.split("\n"):
             line = line.strip()
-            if line and not line.startswith(('Here are', 'extracted insights', '#', '##', '###')):
+            print(f"Processing line: '{line}'")
+            if line and not line.startswith(
+                ("Here are", "extracted insights", "#", "##", "###")
+            ):
                 # Remove numbering if present (e.g., "1. ", "2. ", etc.)
-                if line[0].isdigit() and '.' in line[:5]:
-                    line = line.split('.', 1)[1].strip()
+                if line[0].isdigit() and "." in line[:5]:
+                    line = line.split(".", 1)[1].strip()
                 # Remove bullet points if present
-                if line.startswith(('-', '*', '•')):
+                if line.startswith(("-", "*", "•")):
                     line = line[1:].strip()
                 # Create insight if there's meaningful content
                 if len(line) > 5:  # Minimum length requirement
-                    insights.append(
-                        Insight(text=line, timestamp=0, category="general")
-                    )
+                    print(f"Adding insight: '{line}'")
+                    insights.append(Insight(text=line, timestamp=0, category="general"))
         return insights

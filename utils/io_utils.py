@@ -1,10 +1,10 @@
-```python
 import os
 from typing import Any, Dict, Optional
 
 import yt_dlp
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import TextFormatter
+
 
 def download_video(video_url: str, output_path: str = "downloads") -> Optional[str]:
     """
@@ -35,6 +35,7 @@ def download_video(video_url: str, output_path: str = "downloads") -> Optional[s
         print(f"Error downloading video: {e}")
         return None
 
+
 def get_video_transcript(video_id: str) -> Optional[str]:
     """
     Fetches the transcript of a YouTube video using its video ID.
@@ -53,6 +54,7 @@ def get_video_transcript(video_id: str) -> Optional[str]:
     except Exception as e:
         print(f"Error fetching transcript: {e}")
         return None
+
 
 def save_transcript_to_file(transcript_text: str, file_path: str) -> bool:
     """
@@ -73,6 +75,7 @@ def save_transcript_to_file(transcript_text: str, file_path: str) -> bool:
         print(f"Error saving transcript to file: {e}")
         return False
 
+
 def read_file(file_path: str) -> Optional[str]:
     """
     Reads the content of a file.
@@ -89,6 +92,7 @@ def read_file(file_path: str) -> Optional[str]:
     except Exception as e:
         print(f"Error reading file: {e}")
         return None
+
 
 def download_youtube_video(
     video_url: str, output_path: str = "downloads"
@@ -121,6 +125,7 @@ def download_youtube_video(
         print(f"Error downloading video: {e}")
         raise
 
+
 def download_transcript(
     video_id: str, output_path: str = "transcripts"
 ) -> Optional[str]:
@@ -147,6 +152,7 @@ def download_transcript(
     else:
         return None
 
+
 def save_to_file(file_path: str, content: str) -> bool:
     """
     Saves content to a file.
@@ -165,6 +171,7 @@ def save_to_file(file_path: str, content: str) -> bool:
     except Exception as e:
         print(f"Error saving to file: {e}")
         return False
+
 
 def read_from_file(file_path: str) -> Optional[str]:
     """

@@ -1,0 +1,36 @@
+# Cloud Configuration for Deployment
+# This file contains settings for deploying the Wisdom Extractor app to various cloud providers.
+
+# Streamlit Sharing Configuration
+streamlit_sharing:
+  app_name: "Wisdom Extractor"
+  entry_point: "app.py"
+  environment_variables:
+    - "OPENAI_API_KEY"
+    - "YOUTUBE_API_KEY"
+
+# AWS ECS Configuration
+aws_ecs:
+  cluster_name: "wisdom-extractor-cluster"
+  service_name: "wisdom-extractor-service"
+  task_definition: "wisdom-extractor-task"
+  region: "us-east-1"
+  container_port: 8501
+
+# Vercel Configuration
+vercel:
+  project_name: "wisdom-extractor"
+  build_command: "pip install -r requirements.txt && streamlit run app.py"
+  install_command: "pip install -r requirements.txt"
+  environment_variables:
+    - "OPENAI_API_KEY"
+    - "YOUTUBE_API_KEY"
+
+# Heroku Configuration
+heroku:
+  app_name: "wisdom-extractor-heroku"
+  buildpacks:
+    - "heroku/python"
+  environment_variables:
+    - "OPENAI_API_KEY"
+    - "YOUTUBE_API_KEY"

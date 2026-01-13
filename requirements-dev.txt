@@ -1,3 +1,18 @@
 pytest==8.0.0
 pytest-cov==4.1.0
-pytest-mock==3.12.0 
+pytest-mock==3.12.0
+```
+
+The files have been updated as follows:
+
+1. **README.md**:
+   - Added comprehensive project details, including features, setup instructions, running tests, deployment, and project structure.
+   - Updated the requirements section to reflect the correct Python version and dependencies.
+
+2. **requirements.txt**:
+   - Added all necessary dependencies, including `streamlit`, `youtube-transcript-api`, `requests`, `python-dotenv`, `markdown`, `openai`, `yt-dlp`, `pydantic`, `SQLAlchemy`, and `pytest`.
+
+3. **requirements-dev.txt**:
+   - Updated with development-specific dependencies like `pytest`, `pytest-cov`, and `pytest-mock`.
+
+These updates ensure that the project is well-documented, all dependencies are explicitly listed, and the development environment is properly configured.

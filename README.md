@@ -1,6 +1,6 @@
 # Wisdom Extractor
 
-A Streamlit application that extracts wisdom and insights from YouTube videos using AI. The application uses the YouTube Transcript API to fetch video transcripts and processes them through OpenRouter's AI models (specifically google/gemini-2.0-flash-exp:free) to extract key insights and lessons.
+A Streamlit application that extracts wisdom and insights from YouTube videos using AI. The application uses the YouTube Transcript API to fetch video transcripts and processes them through OpenRouter's AI models (specifically `google/gemini-2.0-flash-exp:free`) to extract key insights and lessons.
 
 ## Features
 
@@ -8,9 +8,20 @@ A Streamlit application that extracts wisdom and insights from YouTube videos us
 - Process transcripts using AI to extract wisdom and insights
 - Clean and user-friendly interface
 - Support for various YouTube URL formats
-- Uses google/gemini-2.0-flash-exp:free model for consistent, high-quality insights
+- Comprehensive error handling and logging
+- Utilities for file storage and database operations
+- Extensive unit tests for reliability
+- Docker support for easy deployment
 
 ## Setup
+
+### Prerequisites
+
+- Python 3.8+
+- OpenRouter API key
+- Internet connection
+
+### Installation
 
 1. Clone this repository:
 ```bash
@@ -41,9 +52,41 @@ streamlit run app.py
 4. Click "Extract Wisdom" to process the transcript with AI
 5. View the extracted wisdom and insights
 
+## Running Tests
+
+To run the unit tests, use the following command:
+```bash
+pytest
+```
+
+## Deployment
+
+The project includes Docker support for easy deployment. Use the following commands to build and run the application:
+
+1. Build the Docker image:
+```bash
+docker build -t wisdom-extractor -f deployment/Dockerfile .
+```
+
+2. Run the application using Docker Compose:
+```bash
+docker-compose -f deployment/docker-compose.yml up -d
+```
+
+## Project Structure
+
+- `app.py`: Main Streamlit application
+- `config/`: Configuration files
+- `data/`: Data models and schemas
+- `logging_utils/`: Logging utilities
+- `persistence/`: Database and storage utilities
+- `tests/`: Unit tests
+- `utils/`: Utility functions and classes
+- `deployment/`: Deployment scripts and configurations
+
 ## Requirements
 
-- Python 3.7+
+- Python 3.8+
 - OpenRouter API key
 - Internet connection
 
@@ -54,3 +97,7 @@ Make sure the YouTube video has captions/transcripts available. The application 
 ## AI Model
 
 This application uses the `google/gemini-2.0-flash-exp:free` model through OpenRouter. This model is specifically chosen for its ability to extract meaningful insights and wisdom from text content.
+
+## License
+
+This project is licensed under the MIT License.

@@ -48,22 +48,9 @@ class MockResponse:
         return self._choices
 
 
-from data.models import Insight
-from utils.ai_processor import AIProcessor
-
-
-class MockChoices:
-    """Custom mock class for choices that handles indexing correctly"""
-
-    def __init__(self, choice):
-        self._choice = choice
-
-    def __getitem__(self, index):
-        return self._choice
-
-
 class TestAIProcessor(unittest.TestCase):
     def setUp(self):
+        """Set up test fixtures."""
         self.transcript = "This is a sample transcript for testing purposes."
         with patch("openai.OpenAI") as mock_openai:
             mock_client = MagicMock()
@@ -73,6 +60,7 @@ class TestAIProcessor(unittest.TestCase):
 
     @patch("openai.OpenAI")
     def test_extract_insights(self, mock_openai):
+        """Test successful extraction of insights from transcript."""
         # Create the innermost message with actual content
         mock_message = MockMessage(
             """
@@ -98,9 +86,7 @@ Here are the extracted insights:
         # Override the processor's client to use our mock
         self.ai_processor.client = mock_client
 
-        # Override the processor's client to use our mock
-        self.ai_processor.client = mock_client
-
+        # Extract insights
         insights = self.ai_processor.extract_insights(self.transcript)
 
         # Debug output
@@ -115,6 +101,7 @@ Here are the extracted insights:
 
     @patch("openai.OpenAI")
     def test_extract_insights_empty_response(self, mock_openai):
+        """Test handling of empty response from AI."""
         # Create the innermost message with empty content
         mock_message = MockMessage("")
 
@@ -134,11 +121,13 @@ Here are the extracted insights:
         # Override the processor's client to use our mock
         self.ai_processor.client = mock_client
 
+        # Should raise RuntimeError for empty response
         with self.assertRaises(RuntimeError):
-            insights = self.ai_processor.extract_insights(self.transcript)
+            _ = self.ai_processor.extract_insights(self.transcript)
 
     @patch("openai.OpenAI")
     def test_extract_insights_error_handling(self, mock_openai):
+        """Test error handling when AI API fails."""
         # Mock the OpenAI client
         mock_client = MagicMock()
         mock_openai.return_value = mock_client
@@ -146,8 +135,9 @@ Here are the extracted insights:
         # Mock an API error
         mock_client.chat.completions.create.side_effect = Exception("API Error")
 
+        # Should raise RuntimeError for API errors
         with self.assertRaises(RuntimeError):
-            self.ai_processor.extract_insights(self.transcript)
+            _ = self.ai_processor.extract_insights(self.transcript)
 
 
 if __name__ == "__main__":

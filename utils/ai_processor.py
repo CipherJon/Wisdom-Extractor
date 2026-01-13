@@ -1,7 +1,7 @@
 import logging
 from typing import List, Optional
 
-from openai import OpenAI
+from openai import OpenAI  # type: ignore
 
 from data.models import Insight
 

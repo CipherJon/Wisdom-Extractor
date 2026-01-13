@@ -72,8 +72,8 @@ class TestIOUtils(unittest.TestCase):
                 self.duration = duration
 
         mock_get_transcript.return_value = [
-            MockSnippet("Hello", 0.0, 1.0),
-            MockSnippet("World", 1.0, 1.0),
+            {"text": "Hello", "start": 0.0, "duration": 1.0},
+            {"text": "World", "start": 1.0, "duration": 1.0},
         ]
 
         # Call function

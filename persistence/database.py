@@ -1,7 +1,7 @@
-
 import sqlite3
-from typing import Optional, List, Dict, Any
 from contextlib import contextmanager
+from typing import Any, Dict, List, Optional
+
 
 class Database:
     """
@@ -30,7 +30,9 @@ class Database:
         finally:
             conn.close()
 
-    def execute_query(self, query: str, params: tuple = (), fetch: bool = False) -> Optional[List[Dict[str, Any]]]:
+    def execute_query(
+        self, query: str, params: tuple[Any, ...] = (), fetch: bool = False
+    ) -> Optional[list[dict[str, Any]]]:
         """
         Execute a SQL query with optional parameters.
 
@@ -44,7 +46,7 @@ class Database:
         """
         with self.get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute(query, params)
+            _ = cursor.execute(query, params)
             if fetch:
                 columns = [column[0] for column in cursor.description]
                 results = [dict(zip(columns, row)) for row in cursor.fetchall()]
@@ -60,9 +62,9 @@ class Database:
             schema (str): SQL schema for the table.
         """
         query = f"CREATE TABLE IF NOT EXISTS {table_name} ({schema})"
-        self.execute_query(query)
+        _ = self.execute_query(query)
 
-    def insert_data(self, table_name: str, data: Dict[str, Any]) -> None:
+    def insert_data(self, table_name: str, data: dict[str, Any]) -> None:
         """
         Insert data into a table.
 
@@ -73,9 +75,12 @@ class Database:
         columns = ", ".join(data.keys())
         placeholders = ", ".join(["?"] * len(data))
         query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
-        self.execute_query(query, tuple(data.values()))
+        params = tuple(data.values()) if data.values() else ()
+        _ = self.execute_query(query, params)
 
-    def fetch_data(self, table_name: str, condition: str = None, params: tuple = ()) -> List[Dict[str, Any]]:
+    def fetch_data(
+        self, table_name: str, condition: Optional[str] = None, params: tuple = ()
+    ) -> list[dict[str, Any]]:
         """
         Fetch data from a table based on a condition.
 
@@ -90,4 +95,7 @@ class Database:
         query = f"SELECT * FROM {table_name}"
         if condition:
             query += f" WHERE {condition}"
-        return self.execute_query(query, params, fetch=True)
+        result = self.execute_query(query, params, fetch=True)
+        if result is None:
+            return []
+        return result

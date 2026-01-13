@@ -1,6 +1,16 @@
+streamlit==1.31.0
 youtube-transcript-api==0.6.1
 requests==2.31.0
 python-dotenv==1.0.0
-streamlit==1.31.0
 markdown==3.5.2
---only-binary :all: 
+openai==1.12.0
+yt-dlp==2023.12.30
+pydantic==2.5.3
+SQLAlchemy==2.0.23
+pytest==8.0.0
+```
+
+```path/to/Wisdom-Extractor/requirements-dev.txt#L1-5
+pytest==8.0.0
+pytest-cov==4.1.0
+pytest-mock==3.12.0

@@ -1,14 +1,14 @@
 import asyncio
 import concurrent.futures
 import os
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, Optional
 
-import yt_dlp
+# Import yt_dlp if needed
 
 
 def run_async_tasks(
-    tasks: List[Callable[[], Any]], max_workers: Optional[int] = None
-) -> List[Any]:
+    tasks: list[Callable[[], Any]], max_workers: Optional[int] = None
+) -> list[Any]:
     """
     Run a list of async tasks concurrently and return their results.
 
@@ -24,12 +24,12 @@ def run_async_tasks(
         return [future.result() for future in concurrent.futures.as_completed(futures)]
 
 
-async def run_asyncio_tasks(tasks: List[Callable[[], Any]]) -> List[Any]:
+async def run_asyncio_tasks(tasks: list[Any]) -> list[Any]:
     """
     Run a list of asyncio tasks concurrently and return their results.
 
     Args:
-        tasks: A list of callable async tasks.
+        tasks: A list of coroutines.
 
     Returns:
         A list of results from the tasks.
@@ -37,12 +37,12 @@ async def run_asyncio_tasks(tasks: List[Callable[[], Any]]) -> List[Any]:
     return await asyncio.gather(*tasks)
 
 
-async def run_concurrently(tasks: List[Callable[[], Any]]) -> List[Any]:
+async def run_concurrently(tasks: list[Any]) -> list[Any]:
     """
     Run a list of async tasks concurrently and return their results.
 
     Args:
-        tasks: A list of callable async tasks.
+        tasks: A list of coroutines.
 
     Returns:
         A list of results from the tasks.
@@ -63,12 +63,14 @@ async def async_download_video(
     Returns:
         Path to the downloaded video file, or None if download failed.
     """
-    import aiohttp
+    # Import aiohttp if needed
 
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
     try:
+        import aiohttp  # type: ignore
+
         async with aiohttp.ClientSession() as session:
             async with session.get(video_url) as response:
                 content = await response.read()

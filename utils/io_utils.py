@@ -20,7 +20,7 @@ def download_video(video_url: str, output_path: str = "downloads") -> Optional[s
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
-    ydl_opts = {
+    ydl_opts: Dict[str, Any] = {
         "format": "best",
         "outtmpl": os.path.join(output_path, "%(title)s.%(ext)s"),
         "quiet": True,
@@ -110,7 +110,7 @@ def download_youtube_video(
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
-    ydl_opts = {
+    ydl_opts: Dict[str, Any] = {
         "format": "best",
         "outtmpl": os.path.join(output_path, "%(title)s.%(ext)s"),
         "quiet": True,

@@ -1,7 +1,6 @@
-```python
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
-setup(
+_ = setup(
     name="WisdomExtractor",
     version="0.1.0",
     author="Your Name",
